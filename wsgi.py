@@ -3,6 +3,7 @@ from flask import Flask
 from flask import jsonify
 from flask import abort
 from flask import Response
+from flask import request
 app = Flask(__name__)
 
 
@@ -44,7 +45,16 @@ def delProducts(id):
 
 @app.route('/api/v1/products', methods=['POST'])
 def createProducts():
-    return abort(500)
+    # data = dict(request.get_json(force = True))
+    data = request.get_json()
+    if data['id'] not in app.the_products_dic:
+        # app.the_products_dic.append(data['id'], data)
+        app.the_products_dic.update({data['id'] : data})
+
+    else:
+        abort(Response(f"id {data['id']} already exists", 406))
+
+    return Response("Create ok.", 201)
 
 
 @app.route('/api/v1/products/<int:id>', methods=['PATCH'])

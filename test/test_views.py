@@ -1,5 +1,6 @@
 # tests/test_views.py
 from flask_testing import TestCase
+from flask import jsonify
 from wsgi import app
 
 
@@ -9,6 +10,31 @@ class TestViews(TestCase):
         return app
 
 #C
+    def test_add_products_json(self):
+        app.the_products_dic = {
+            1: {'id': 1, 'name': 'Skello'},
+            2: {'id': 2, 'name': 'Socialive.tv'},
+            3: {'id': 3, 'name': 'plop'},
+            4: {'id': 4, 'name': 'bidule'}
+        }
+        payload = {'id': 5, 'name': 'truc'}
+        response = self.client.post("/api/v1/products", json=payload)
+        self.assertEqual(response.status_code, 201)
+        response = self.client.get("/api/v1/products/5")
+        self.assertEqual(response.status_code, 200)
+
+
+    def test_add_products_fail(self):
+        app.the_products_dic = {
+            1: {'id': 1, 'name': 'Skello'},
+            2: {'id': 2, 'name': 'Socialive.tv'},
+            3: {'id': 3, 'name': 'plop'},
+            4: {'id': 4, 'name': 'bidule'}
+        }
+        payload = {'id': 4, 'name': 'truc'}
+        response = self.client.post("/api/v1/products", json=payload)
+        self.assertEqual(response.status_code, 406)
+
 #R
     def test_products_json(self):
         app.the_products_dic = {
