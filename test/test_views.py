@@ -2,12 +2,21 @@
 from flask_testing import TestCase
 from wsgi import app
 
+
 class TestViews(TestCase):
     def create_app(self):
         app.config['TESTING'] = True
         return app
 
+#C
+#R
     def test_products_json(self):
+        app.the_products_dic = {
+            1: {'id': 1, 'name': 'Skello'},
+            2: {'id': 2, 'name': 'Socialive.tv'},
+            3: {'id': 3, 'name': 'plop'},
+            4: {'id': 4, 'name': 'bidule'}
+        }
         response = self.client.get("/api/v1/products")
         products = response.json
         self.assertIsInstance(products, list)
@@ -16,7 +25,39 @@ class TestViews(TestCase):
 
 
     def test_products_id1_json(self):
+        app.the_products_dic = {
+            1: {'id': 1, 'name': 'Skello'},
+            2: {'id': 2, 'name': 'Socialive.tv'},
+            3: {'id': 3, 'name': 'plop'},
+            4: {'id': 4, 'name': 'bidule'}
+        }
         response = self.client.get("/api/v1/products/1")
         product = response.json
         self.assertIsInstance(product, object)
         self.assertEqual(response.status_code, 200)
+
+
+    def test_products_id5_404(self):
+        app.the_products_dic = {
+            1: {'id': 1, 'name': 'Skello'},
+            2: {'id': 2, 'name': 'Socialive.tv'},
+            3: {'id': 3, 'name': 'plop'},
+            4: {'id': 4, 'name': 'bidule'}
+        }
+        response = self.client.get("/api/v1/products/5")
+        self.assertEqual(response.status_code, 404)
+#U
+#D
+    def test_Del_products_id1(self):
+        app.the_products_dic = {
+            1: {'id': 1, 'name': 'Skello'},
+            2: {'id': 2, 'name': 'Socialive.tv'},
+            3: {'id': 3, 'name': 'plop'},
+            4: {'id': 4, 'name': 'bidule'}
+        }
+        response = self.client.delete("/api/v1/products/1")
+        self.assertEqual(response.status_code, 204)
+        response = self.client.get("/api/v1/products/1")
+        self.assertEqual(response.status_code, 404)
+
+

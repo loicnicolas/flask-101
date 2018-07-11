@@ -6,14 +6,7 @@ from flask import Response
 app = Flask(__name__)
 
 
-the_products = [
-    {'id': 1, 'name': 'Skello'},
-    {'id': 2, 'name': 'Socialive.tv'},
-    {'id': 3, 'name': 'plop'},
-    {'id': 4, 'name': 'bidule'}
-]
-
-the_products_dic = {
+app.the_products_dic = {
     1: {'id': 1, 'name': 'Skello'},
     2: {'id': 2, 'name': 'Socialive.tv'},
     3: {'id': 3, 'name': 'plop'},
@@ -28,27 +21,32 @@ def hello():
 
 @app.route('/api/v1/products', methods=['GET'])
 def getProducts():
-    return jsonify(the_products), 200
+    return jsonify(list(app.the_products_dic.values())), 200
 
 
 @app.route('/api/v1/products/<int:id>', methods=['GET'])
 def getAProduct(id):
-    if id in the_products_dic:
-        return jsonify(the_products_dic[id]), 200
+    if id in app.the_products_dic:
+        return jsonify(app.the_products_dic[id]), 200
     else:
-        abort(Response(f"product id:{id} not found ", 404) )
+        abort(Response(f"product id:{id} not found", 404) )
 
 
-@app.route('/api/v1/products/:id', methods=['DELETE'])
-def delProducts():
-    return None, 500
+@app.route('/api/v1/products/<int:id>', methods=['DELETE'])
+def delProducts(id):
+    if id in app.the_products_dic:
+        app.the_products_dic.pop(id)
+    else:
+        abort(Response(f"product id:{id} not found. Cannot be deleted", 404))
+
+    return Response("Del ok.", 204)
 
 
 @app.route('/api/v1/products', methods=['POST'])
 def createProducts():
-    return None, 500
+    return abort(500)
 
 
-@app.route('/api/v1/products/:id', methods=['PATCH'])
-def updateProducts():
-    return None, 500
+@app.route('/api/v1/products/<int:id>', methods=['PATCH'])
+def updateProducts(id):
+    return abort(500)
