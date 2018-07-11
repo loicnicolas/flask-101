@@ -73,6 +73,31 @@ class TestViews(TestCase):
         response = self.client.get("/api/v1/products/5")
         self.assertEqual(response.status_code, 404)
 #U
+
+    def test_update_product(self):
+        app.the_products_dic = {
+            1: {'id': 1, 'name': 'Skello'},
+            2: {'id': 2, 'name': 'Socialive.tv'},
+            3: {'id': 3, 'name': 'plop'},
+            4: {'id': 4, 'name': 'bidule'}
+        }
+        payload = {'id': 4, 'name': 'truc2'}
+        response = self.client.patch('/api/v1/products/4', json=payload)
+
+        self.assertEqual(response.status_code, 204)
+
+        response = self.client.get("/api/v1/products/1")
+        self.assertEqual(response.status_code, 200)
+        product1 = response.json
+        self.assertEqual(product1['id'], 1)
+        self.assertEqual(product1['name'], 'Skello')
+
+        response = self.client.get("/api/v1/products/4")
+        self.assertEqual(response.status_code, 200)
+        product4 = response.json
+        self.assertEqual(product4['id'], 4)
+        self.assertEqual(product4['name'], 'truc2')
+
 #D
     def test_Del_products_id1(self):
         app.the_products_dic = {

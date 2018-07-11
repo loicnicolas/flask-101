@@ -45,7 +45,6 @@ def delProducts(id):
 
 @app.route('/api/v1/products', methods=['POST'])
 def createProducts():
-    # data = dict(request.get_json(force = True))
     data = request.get_json()
     if data['id'] not in app.the_products_dic:
         # app.the_products_dic.append(data['id'], data)
@@ -59,4 +58,11 @@ def createProducts():
 
 @app.route('/api/v1/products/<int:id>', methods=['PATCH'])
 def updateProducts(id):
-    return abort(500)
+    data = request.get_json()
+
+    if data['id'] in app.the_products_dic:
+        app.the_products_dic[data['id']] = data
+    else:
+        abort(Response(f"product id:{id} not found. Cannot be updated", 404))
+
+    return Response("Update ok.", 204)
